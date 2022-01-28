@@ -36,16 +36,22 @@ num_pages = int(math.ceil(num_results / 15))
 print("Num results:", results_pager.count)
 print("Num pages:", num_pages)
 
-print("\t----- PAGE 1 -----")
-count_sound = 0
-for sound in results_pager:
-    count_sound += 1
-    print("\t-", sound.name, "rated", sound.avg_rating, "download", sound.download)
-print(count_sound)
-print("\t----- PAGE 2 -----")
-results_pager = results_pager.next_page()
-for sound in results_pager:
-    print("\t-", sound.name, "rated", sound.avg_rating)
-print()
+# print("\t----- PAGE 1 -----")
+# count_sound = 0
+# for sound in results_pager:
+#     count_sound += 1
+#     print("\t-", sound.name, "rated", sound.avg_rating, "download", sound.download)
+# print(count_sound)
+# print("\t----- PAGE 2 -----")
+# results_pager = results_pager.next_page()
+# for sound in results_pager:
+#     print("\t-", sound.name, "rated", sound.avg_rating)
+# print()
 
-# for pages in results_pager.count:
+for page in range(num_pages):
+    for sound in results_pager:
+        print("\t-", sound.name, "rated", sound.avg_rating)
+    print()
+    if page == num_pages - 1:
+        break
+    results_pager = results_pager.next_page()
