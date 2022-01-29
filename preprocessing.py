@@ -100,6 +100,27 @@ class AudioPreProcess():
 
         return mel_spec
 
+    # Augment Mel Spectrogram on Time and Frequency Axis
+    @staticmethod
+    def mel_augment(mel_spec, max_mask=0.1, n_freq_masks=1, n_time_masks=1):
+        _, n_mels, n_steps = mel_spec.shape
+        mask_value = mel_spec.mean()
+        aug_mel_spec = mel_spec.clone()
+
+        # Randomly masking the frequency axis
+        freq_mask_param = max_mask * n_mels
+        for _ in range(n_freq_masks):
+            aug_mel_spec = transforms.FrequencyMasking(freq_mask_param)(aug_mel_spec, mask_value)
+        
+        # Randomly masking the time axis
+        time_mask_param = max_mask * n_steps
+        for _ in range(n_time_masks):
+            aug_mel_spec = transforms.TimeMasking(time_mask_param)(aug_mel_spec, mask_value)
+
+        return aug_mel_spec
+
+
+
 
 
 audio = AudioPreProcess.load_audio('data/backapp_full_audios/492764.wav')
@@ -108,8 +129,9 @@ resampled = AudioPreProcess.audio_to_44100(rechanneled)
 resized = AudioPreProcess.audio_to_12sec(resampled)
 shifted = AudioPreProcess.audio_time_shift(resized, shift_range=0.4)
 mel_spec = AudioPreProcess.audio_to_mel(shifted)
+mel_spec_aug = AudioPreProcess.mel_augment(mel_spec, max_mask=0.1, n_freq_masks=1, n_time_masks=1)
 
-print("Shape of spectrogram: {}".format(mel_spec.size()))
+print("Shape of spectrogram: {}".format(mel_spec_aug.size()))
 
 # plt.figure()
 # plt.imshow(mel_spec.log2()[0, :, :].numpy())
