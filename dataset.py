@@ -22,12 +22,3 @@ class DatasetAudio(Dataset):
         mel_spec = AudioPreProcess.audio_to_mel(shifted)
         mel_spec_aug = AudioPreProcess.mel_augment(mel_spec, max_mask=0.1, n_freq_masks=1, n_time_masks=1)
         return mel_spec_aug, label
-
-df = pd.read_csv('data/backapp_full_audios.csv')
-audio_dataset_1 = DatasetAudio(df, '/Users/franciscovarelacid/Desktop/Strive/BackApp/')
-audio_dataset_2 = DatasetAudio(df, '/Users/franciscovarelacid/Desktop/Strive/BackApp/')
-audio_dataset_3 = DatasetAudio(df, '/Users/franciscovarelacid/Desktop/Strive/BackApp/')
-
-audio_dataset = ConcatDataset([audio_dataset_1, audio_dataset_2, audio_dataset_3])
-
-print(len(audio_dataset))
