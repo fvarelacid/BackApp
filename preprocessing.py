@@ -1,13 +1,9 @@
 #### Data Preprocessing ####
 
 import numpy as np
-import pandas as pd
 import torch
 import torchaudio
 from torchaudio import transforms
-from IPython.display import Audio
-from math import floor
-import matplotlib.pyplot as plt
 
 
 ### Class for Preprocessing ###
@@ -94,9 +90,9 @@ class AudioPreProcess():
         mel_spec = transforms.MelSpectrogram(sample_rate=sample_rate, n_fft=n_fft, hop_length=hop_length, n_mels=n_mels)(audio_sig)
 
         # Convert to db
-        mel_spec = transforms.AmplitudeToDB(top_db=80)(mel_spec)
+        db_mel_spec = transforms.AmplitudeToDB(top_db=80)(mel_spec)
 
-        return mel_spec
+        return db_mel_spec
 
     # Augment Mel Spectrogram on Time and Frequency Axis
     @staticmethod
@@ -119,16 +115,25 @@ class AudioPreProcess():
 
 
 
+def single_audio_preprocessing(file_path, n_mels=64, n_fft=1024, hop_length=None):
+    audio = AudioPreProcess.load_audio(file_path)
+    audio = AudioPreProcess.audio_to_mono(audio)
+    audio = AudioPreProcess.audio_to_44100(audio)
+    audio = AudioPreProcess.audio_to_12sec(audio)
+    audio = AudioPreProcess.audio_to_mel(audio, n_mels, n_fft, hop_length)
 
+    return audio
 
-# audio = AudioPreProcess.load_audio('data/backapp_full_audios/492764.wav')
+# audio = AudioPreProcess.load_audio('data/backapp_full_audios/502924.wav')
 # rechanneled = AudioPreProcess.audio_to_mono(audio)
 # resampled = AudioPreProcess.audio_to_44100(rechanneled)
 # resized = AudioPreProcess.audio_to_12sec(resampled)
 # shifted = AudioPreProcess.audio_time_shift(resized, shift_range=0.4)
 # mel_spec = AudioPreProcess.audio_to_mel(shifted)
-# mel_spec_aug = AudioPreProcess.mel_augment(mel_spec, max_mask=0.1, n_freq_masks=1, n_time_masks=1)
+# mel_spec_aug = AudioPreProcess.mel_augment(mel_spec, max_mask=0.1, n_freq_masks=2, n_time_masks=2)
 
+# print(mel_spec)
+# print("Min of waveform: {}\nMax of waveform: {}\nMean of waveform: {}".format(shifted[0].min(), shifted[0].max(), shifted[0].mean()))
 # print("Shape of spectrogram: {}".format(mel_spec_aug.size()))
 
 # plt.figure()

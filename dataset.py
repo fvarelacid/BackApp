@@ -1,6 +1,6 @@
 ### Dataset Builder ###
 
-from torch.utils.data import Dataset, ConcatDataset
+from torch.utils.data import Dataset
 from preprocessing import AudioPreProcess
 import pandas as pd
 
@@ -22,3 +22,4 @@ class DatasetAudio(Dataset):
         mel_spec = AudioPreProcess.audio_to_mel(shifted)
         mel_spec_aug = AudioPreProcess.mel_augment(mel_spec, max_mask=0.1, n_freq_masks=1, n_time_masks=1)
         return mel_spec_aug, label
+
