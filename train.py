@@ -5,8 +5,6 @@ from dataset import DatasetAudio
 import pandas as pd
 from torch import nn
 import torch
-from torch.nn import init
-from torch.nn.functional import normalize
 import torch.nn.functional as F
 
 
@@ -38,7 +36,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print('Using {} device'.format(device))
 
 
-class CNNet(nn.Module):
+class DistressModel(nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = nn.Conv2d(1, 32, kernel_size=5)
@@ -59,9 +57,7 @@ class CNNet(nn.Module):
         x = F.relu(self.fc2(x))
         return F.log_softmax(x,dim=1)
     
-model = CNNet().to(device)
-
-print(model)
+model = DistressModel().to(device)
 
 
 # cost function used to determine best parameters
@@ -110,7 +106,7 @@ def test(dataloader, model):
     print(f'\nTest Error:\nacc: {(100*correct):>0.1f}%, avg loss: {test_loss:>8f}\n')
 
             
-epochs = 15
+epochs = 2
 
 for t in range(epochs):
     print(f'Epoch {t+1}\n-------------------------------')
@@ -131,6 +127,8 @@ with torch.no_grad():
         print("Actual:")
         print(f"{Y}")
         break
+
+
 # # ------------------------------------------------------- #
 # # Model
 # class DistressClassifier(nn.Module):
