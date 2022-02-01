@@ -5,14 +5,14 @@ from shutil import copyfile
 import shutil
 import os
 
-main_df = pd.read_csv("data/backapp_full_audios.csv")
-original_dev_df = pd.read_csv("data/FSD50K.ground_truth/dev.csv")
-original_eval_df = pd.read_csv("data/FSD50K.ground_truth/eval.csv")
+# main_df = pd.read_csv("data/backapp_full_audios.csv")
+# original_dev_df = pd.read_csv("data/FSD50K.ground_truth/dev.csv")
+# original_eval_df = pd.read_csv("data/FSD50K.ground_truth/eval.csv")
 
 
-dev_path = "data/FSD50K.dev_audio/"
-eval_path = "data/FSD50K.eval_audio/"
-main_path = "data/backapp_full_audios/"
+# dev_path = "data/FSD50K.dev_audio/"
+# eval_path = "data/FSD50K.eval_audio/"
+# main_path = "data/backapp_full_audios/"
 
 # ----------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------
@@ -117,8 +117,27 @@ def concat_df(df1, df2):
     df.to_csv("data/backapp_audios.csv", index=False)
     return df
 
-df1 = pd.read_csv("data/backapp_positive_audios.csv")
-df2 = pd.read_csv("data/backapp_negative_audios.csv")
-df = concat_df(df1, df2)
+# df1 = pd.read_csv("data/backapp_positive_audios.csv")
+# df2 = pd.read_csv("data/backapp_negative_audios.csv")
+# df = concat_df(df1, df2)
 # --------------------------------------------------------------------------------------------------
 # --------------------------------------------------------------------------------------------------
+
+
+# --------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
+# Add file path to df
+def add_filepath(df, main_path):
+    for i, row in df.iterrows():
+        filepath = row['filename']
+        label = row['label']
+        filepath = main_path + str(label) + '/' + filepath
+        df.at[i, 'filepath'] = filepath
+        cols = ['filename', 'filepath', 'label']
+        df = df[cols]
+    return df
+
+main_path = "data/backapp_full_audios/"
+df = pd.read_csv("data/backapp_audios.csv")
+new_df = add_filepath(df, main_path)
+new_df.to_csv("data/backapp_audios_with_path.csv", index=False)
