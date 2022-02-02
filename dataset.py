@@ -5,16 +5,15 @@ from preprocessing import AudioPreProcess
 import pandas as pd
 
 class DatasetAudio(Dataset):
-    def __init__(self, df, file_path):
+    def __init__(self, df):
         self.df = df
-        self.file_path = str(file_path)
 
     def __len__(self):
         return len(self.df)
 
     def __getitem__(self, idx):
         label = self.df.iloc[idx]['label']
-        audio = AudioPreProcess.load_audio(self.file_path + self.df.iloc[idx, 0])
+        audio = AudioPreProcess.load_audio(self.df.iloc[idx, 1])
         rechanneled = AudioPreProcess.audio_to_mono(audio)
         resampled = AudioPreProcess.audio_to_44100(rechanneled)
         resized = AudioPreProcess.audio_to_12sec(resampled)
