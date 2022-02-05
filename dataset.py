@@ -2,7 +2,6 @@
 
 from torch.utils.data import Dataset
 from preprocessing import AudioPreProcess
-import pandas as pd
 
 class DatasetAudio(Dataset):
     def __init__(self, df):

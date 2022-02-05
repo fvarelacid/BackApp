@@ -138,6 +138,6 @@ def add_filepath(df, main_path):
     return df
 
 main_path = "data/backapp_full_audios/"
-df = pd.read_csv("data/backapp_audios.csv")
+df = pd.read_csv("data/backapp_negative_audios.csv")
 new_df = add_filepath(df, main_path)
-new_df.to_csv("data/backapp_audios_with_path.csv", index=False)
+new_df.to_csv("data/backapp_negative_audios_with_path.csv", index=False)

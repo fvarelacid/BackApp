@@ -9,124 +9,128 @@ import torch.nn.functional as F
 
 
 # Load data df
-df = pd.read_csv('data/backapp_full_audios.csv')
+df_positives = pd.read_csv('data/backapp_positive_audios_with_path.csv')
+df_negatives = pd.read_csv('data/backapp_negative_audios_with_path.csv')
 
 # Create 3 different datasets from original df
-audio_dataset_1 = DatasetAudio(df, '/Users/franciscovarelacid/Desktop/Strive/BackApp/')
-audio_dataset_2 = DatasetAudio(df, '/Users/franciscovarelacid/Desktop/Strive/BackApp/')
-audio_dataset_3 = DatasetAudio(df, '/Users/franciscovarelacid/Desktop/Strive/BackApp/')
+audio_dataset_1 = DatasetAudio(df_positives)
+audio_dataset_2 = DatasetAudio(df_positives)
+audio_dataset_3 = DatasetAudio(df_positives)
+audio_dataset_negative = DatasetAudio(df_negatives)
 
-audio_dataset = ConcatDataset([audio_dataset_1, audio_dataset_2, audio_dataset_3])
+audio_dataset = ConcatDataset([audio_dataset_1, audio_dataset_2, audio_dataset_3, audio_dataset_negative])
 
-# Define the number of samples for training and validation - 80% and 20% respectively
-train_size = int(0.8 * len(audio_dataset))
-val_size = len(audio_dataset) - train_size
+print(len(audio_dataset))
 
-# Randomly split the dataset into training and validation sets
-train_dataset, val_dataset = random_split(audio_dataset, [train_size, val_size])
+# # Define the number of samples for training and validation - 80% and 20% respectively
+# train_size = int(0.8 * len(audio_dataset))
+# val_size = len(audio_dataset) - train_size
 
-# Create data loaders
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
+# # Randomly split the dataset into training and validation sets
+# train_dataset, val_dataset = random_split(audio_dataset, [train_size, val_size])
 
-print(train_loader.dataset[0][0][0].sum())
+# # Create data loader
+# train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+# val_loader = DataLoader(val_dataset, batch_size=16, shuffle=False)
 
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-print('Using {} device'.format(device))
-
-
-class DistressModel(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv1 = nn.Conv2d(1, 32, kernel_size=5)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=5)
-        self.conv2_drop = nn.Dropout2d()
-        self.flatten = nn.Flatten()
-        self.fc1 = nn.Linear(2147392, 50)
-        self.fc2 = nn.Linear(50, 2)
+# print(train_loader.dataset[0][0][0].sum())
 
 
-    def forward(self, x):
-        x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
-        #x = x.view(x.size(0), -1)
-        x = self.flatten(x)
-        x = F.relu(self.fc1(x))
-        x = F.dropout(x, training=self.training)
-        x = F.relu(self.fc2(x))
-        return F.log_softmax(x,dim=1)
+# device = 'cuda' if torch.cuda.is_available() else 'cpu'
+# print('Using {} device'.format(device))
+
+
+# class DistressModel(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+#         self.conv1 = nn.Conv2d(1, 32, kernel_size=5)
+#         self.conv2 = nn.Conv2d(32, 64, kernel_size=5)
+#         self.conv2_drop = nn.Dropout2d()
+#         self.flatten = nn.Flatten()
+#         self.fc1 = nn.Linear(2147392, 50)
+#         self.fc2 = nn.Linear(50, 2)
+
+
+#     def forward(self, x):
+#         x = F.relu(F.max_pool2d(self.conv1(x), 2))
+#         x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
+#         #x = x.view(x.size(0), -1)
+#         x = self.flatten(x)
+#         x = F.relu(self.fc1(x))
+#         x = F.dropout(x, training=self.training)
+#         x = F.relu(self.fc2(x))
+#         return F.log_softmax(x,dim=1)
     
-model = DistressModel().to(device)
+# model = DistressModel().to(device)
 
 
-# cost function used to determine best parameters
-cost = torch.nn.CrossEntropyLoss()
+# # cost function used to determine best parameters
+# cost = torch.nn.CrossEntropyLoss()
 
-# used to create optimal parameters
-learning_rate = 0.001
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+# # used to create optimal parameters
+# learning_rate = 0.001
+# optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-# Create the training function
+# # Create the training function
 
-def train(dataloader, model, loss, optimizer):
-    model.train()
-    size = len(dataloader.dataset)
-    for batch, (X, Y) in enumerate(dataloader):
-        X, Y = X.to(device), Y.to(device)
-        optimizer.zero_grad()
-        pred = model(X)
-        loss = cost(pred, Y)
-        loss.backward()
-        optimizer.step()
+# def train(dataloader, model, loss, optimizer):
+#     model.train()
+#     size = len(dataloader.dataset)
+#     for batch, (X, Y) in enumerate(dataloader):
+#         X, Y = X.to(device), Y.to(device)
+#         optimizer.zero_grad()
+#         pred = model(X)
+#         loss = cost(pred, Y)
+#         loss.backward()
+#         optimizer.step()
 
-        if batch % 10 == 0:
-            loss, current = loss.item(), batch * len(X)
-            print(f'loss: {loss:>7f}  [{current:>5d}/{size:>5d}]')
+#         if batch % 10 == 0:
+#             loss, current = loss.item(), batch * len(X)
+#             print(f'loss: {loss:>7f}  [{current:>5d}/{size:>5d}]')
 
 
-# Create the validation/test function
+# # Create the validation/test function
 
-def test(dataloader, model):
-    size = len(dataloader.dataset)
-    model.eval()
-    test_loss, correct = 0, 0
+# def test(dataloader, model):
+#     size = len(dataloader.dataset)
+#     model.eval()
+#     test_loss, correct = 0, 0
 
-    with torch.no_grad():
-        for batch, (X, Y) in enumerate(dataloader):
-            X, Y = X.to(device), Y.to(device)
-            pred = model(X)
+#     with torch.no_grad():
+#         for batch, (X, Y) in enumerate(dataloader):
+#             X, Y = X.to(device), Y.to(device)
+#             pred = model(X)
 
-            test_loss += cost(pred, Y).item()
-            correct += (pred.argmax(1)==Y).type(torch.float).sum().item()
+#             test_loss += cost(pred, Y).item()
+#             correct += (pred.argmax(1)==Y).type(torch.float).sum().item()
 
-    test_loss /= size
-    correct /= size
+#     test_loss /= size
+#     correct /= size
 
-    print(f'\nTest Error:\nacc: {(100*correct):>0.1f}%, avg loss: {test_loss:>8f}\n')
+#     print(f'\nTest Error:\nacc: {(100*correct):>0.1f}%, avg loss: {test_loss:>8f}\n')
 
             
-epochs = 2
+# epochs = 2
 
-for t in range(epochs):
-    print(f'Epoch {t+1}\n-------------------------------')
-    train(train_loader, model, cost, optimizer)
-    test(val_loader, model)
-print('Done!')
+# for t in range(epochs):
+#     print(f'Epoch {t+1}\n-------------------------------')
+#     train(train_loader, model, cost, optimizer)
+#     test(val_loader, model)
+# print('Done!')
 
 
-model.eval()
-test_loss, correct = 0, 0
+# model.eval()
+# test_loss, correct = 0, 0
 
-with torch.no_grad():
-    for batch, (X, Y) in enumerate(val_loader):
-        X, Y = X.to(device), Y.to(device)
-        pred = model(X)
-        print("Predicted:")
-        print(f"{pred.argmax(1)}")
-        print("Actual:")
-        print(f"{Y}")
-        break
+# with torch.no_grad():
+#     for batch, (X, Y) in enumerate(val_loader):
+#         X, Y = X.to(device), Y.to(device)
+#         pred = model(X)
+#         print("Predicted:")
+#         print(f"{pred.argmax(1)}")
+#         print("Actual:")
+#         print(f"{Y}")
+#         break
 
 
 # # ------------------------------------------------------- #
