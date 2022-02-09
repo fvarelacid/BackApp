@@ -8,7 +8,9 @@ model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
 
 def get_transcription(audio_path):
     #load any audio file of your choice
-    speech, rate = librosa.load("data/voice_data/Test1.m4a",sr=16000)
+    speech, rate = librosa.load(audio_path, sr=16000)
+
+    print(speech.shape)
 
 
     input_values = tokenizer(speech, return_tensors = 'pt', sampling_rate=16000).input_values
@@ -24,3 +26,5 @@ def get_transcription(audio_path):
 
     return transcriptions
 
+
+print(get_transcription("data/voice_data/Test1.m4a"))
