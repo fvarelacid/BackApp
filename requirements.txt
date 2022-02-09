@@ -1,0 +1,13 @@
+soundfile
+torch
+torchaudio
+transformers
+pyaudio
+webrtcvad
+rx
+halo
+onnxruntime
+flask
+numpy
+pandas
+tqdm
