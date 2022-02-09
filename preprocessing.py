@@ -124,6 +124,16 @@ def single_audio_preprocessing(file_path, n_mels=64, n_fft=1024, hop_length=None
 
     return audio
 
+
+def live_audio_preprocessing(audio, n_mels=64, n_fft=1024, hop_length=None):
+    audio = AudioPreProcess.audio_to_mono(audio)
+    audio = AudioPreProcess.audio_to_44100(audio)
+    audio = AudioPreProcess.audio_to_12sec(audio)
+    audio = AudioPreProcess.audio_to_mel(audio, n_mels, n_fft, hop_length)
+
+    return audio
+
+
 # audio = AudioPreProcess.load_audio('data/backapp_full_audios/502924.wav')
 # rechanneled = AudioPreProcess.audio_to_mono(audio)
 # resampled = AudioPreProcess.audio_to_44100(rechanneled)
