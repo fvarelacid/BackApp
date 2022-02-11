@@ -2,5 +2,4 @@
 *.wav
 output/best_model.pt
 *.icloud
-output/best_model_1.pt
 output1/best_model_1.pt
