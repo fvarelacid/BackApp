@@ -39,7 +39,7 @@ class LiveWav2Vec2():
 
     def vad_process(device_name, asr_input_queue):
         vad = webrtcvad.Vad()
-        vad.set_mode(1)
+        vad.set_mode(2)
 
         audio = pyaudio.PyAudio()
         FORMAT = pyaudio.paInt16
@@ -92,7 +92,7 @@ class LiveWav2Vec2():
             float64_buffer = np.frombuffer(
                 audio_frames, dtype=np.int16) / 32767
             
-            start = time.perf_counter()
+            # start = time.perf_counter()
 
             # Transform buffer to tensor
             audio_sig = torch.tensor(float64_buffer).float().unsqueeze(0)

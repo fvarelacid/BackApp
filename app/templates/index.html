@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/d4506bfbeb.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../static/index.css">
+    <title>BackApp</title>
+
+  </head>
+  <body>
+
+    <div class="container">
+        <div class="row">
+            <div id="backed_father" class="col-md-5">
+                <h3>Backed</h3>
+                <div class="backed">
+                    <div class="logo">
+                        <img src="../static/images/backapp_red.png" alt="">
+                    </div>
+                    <div class="middle_screen">
+                        <span class="start_listening">
+                            <form class="submit_form" action="/", method="post">
+                                <button id="sub_button" type="submit" class="btn btn-danger btn-circle btn-xl" onclick="toggle_display()"><i class="fa fa-microphone"></i></button>
+                            </form>
+                            <p class="press">Press to Start Listening</p>
+                        </span>
+                        <span class="listening">
+                            <img src="../static/images/sound_wave.gif" alt="sound_wave" class="sound_wave">
+                            <p class="list_text">Listening...</p>
+                        </span>
+                        {% if prediction %}
+                            <span class="prediction">
+                                <p id="prediction">{{prediction}}</p>
+                                <p id="countdown"></p>
+                            </span>
+                            <button class="ok_button" type="submit" onclick="stop_countdown()">I'm OKAY!</button>
+                        {% endif %}
+                    </div>
+                    <div class="bottom_screen">
+
+                    </div>
+                </div>
+            </div>
+            <div id="backer_father" class="col-md-5 offset-2">
+                <h3>Backer</h3>
+                <div class="backer">
+                    <div class="logo">
+                        <img src="../static/images/backapp_red.png" alt="">
+                    </div>
+                    <div class="middle_screen">
+                        <div id="map"></div>
+                        <span class="access_map">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <p>Someone near you...</p> 
+                            <p class="urgent">Needs Your Help!</p>
+                            <button class="map_button" type="submit" onclick="toggle_map()">On my way!</button>
+                        </span>
+                        <span class="all_ok">
+                            <i class="fa-solid fa-face-grin-wide"></i>
+                            <p class="ok_text">Everyone around you seems OK!</p>
+                        </span>
+                    </div>
+                    <div class="bottom_screen">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    
+    <!------------- JavaScript Starts Here --------------->
+
+    <script>
+        function toggle_display(){
+            document.getElementsByClassName("start_listening")[0].style.display = 'none';
+            document.getElementsByClassName("listening")[0].style.display = 'block';
+        }
+    </script>
+    <script>
+        function toggle_map(){
+            el_warning = document.querySelector('.access_map');
+            el_map = document.querySelector('#map');
+
+            if(el_warning.style.display == 'none'){
+                el_warning.style.display = 'block'
+                el_map.style.display = 'none'
+            }else{
+                el_warning.style.display = 'none'
+                el_map.style.display = 'block'
+            }
+
+        }
+    </script>
+
+    <script>
+        // Initialize and add the map
+        function initMap() {
+            // The location of Uluru
+            const uluru = { lat: 51.3128898, lng: -0.8965307 };
+            // The map, centered at Uluru
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 16,
+                center: uluru,
+            });
+            // The marker, positioned at Uluru
+            const marker = new google.maps.Marker({
+                position: uluru,
+                map: map,
+            });
+        }
+    </script>
+
+    {% if prediction %}
+        <script>
+            // Set the date we're counting down to
+            var timeleft = 10;
+            
+
+            // Update the count down every 1 second
+            var x = setInterval(function() {
+
+            
+            // Find the distance between now and the count down date
+            var distance = timeleft;
+                
+                
+            // Output the result in an element with id="demo"
+            document.getElementById("countdown").innerHTML = distance;
+            timeleft -= 1;
+                
+            // If the count down is over, write some text 
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("countdown").innerHTML = "Help Requested!";
+                document.getElementsByClassName("all_ok")[0].style.display = 'none';
+                document.getElementsByClassName("access_map")[0].style.display = 'block';
+            }
+            }, 1000);
+        </script>
+    {% endif %}
+
+    <script>
+
+        function stop_countdown(){
+            clearInterval(x);
+            document.getElementsByClassName("prediction")[0].style.display = 'none';
+            document.getElementsByClassName("start_listening")[0].style.display = 'block'
+            document.getElementsByClassName("access_map")[0].style.display = 'none';
+            document.getElementsByClassName("ok_button")[0].style.display = 'none';
+
+
+        }
+
+    </script>
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJE8lE4pz-le4v0OYRoeKVDFcvqOhrz1Y&callback=initMap&libraries=&v=weekly" async>
+    </script>
+  </body>
+</html>
