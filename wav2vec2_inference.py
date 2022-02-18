@@ -1,13 +1,6 @@
 import soundfile as sf
 import torch
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
-from preprocessing import single_audio_preprocessing
-
-
-# Improvements: 
-# - gpu / cpu flag
-# - convert non 16 khz sample rates
-# - inference time log
 
 class Wave2Vec2Inference():
     def __init__(self,model_name):
@@ -18,7 +11,6 @@ class Wave2Vec2Inference():
     def buffer_to_text(self,audio_buffer):
         if(len(audio_buffer)==0):
             return ""
-
 
         inputs = self.processor(torch.tensor(audio_buffer), sampling_rate=16_000, return_tensors="pt", padding=True)
 
@@ -33,9 +25,3 @@ class Wave2Vec2Inference():
         audio_input, samplerate = sf.read(filename)
         assert samplerate == 16000
         return self.buffer_to_text(audio_input)
-
-if __name__ == "__main__":
-    print("Model test")
-    asr = Wave2Vec2Inference("maxidl/wav2vec2-large-xlsr-german")
-    text = asr.file_to_text("test.wav")
-    print(text)

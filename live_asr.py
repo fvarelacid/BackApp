@@ -3,10 +3,7 @@ import webrtcvad
 from wav2vec2_inference import Wave2Vec2Inference
 import numpy as np
 import threading
-import copy
 import time
-from sys import exit
-import contextvars
 from queue import  Queue
 from model import DistressModel
 import torch
@@ -48,7 +45,6 @@ class LiveWav2Vec2():
         # A frame must be either 10, 20, or 30 ms in duration for webrtcvad
         FRAME_DURATION = 30
         CHUNK = int(RATE * FRAME_DURATION / 1000)
-        RECORD_SECONDS = 50
 
         microphones = LiveWav2Vec2.list_microphones(audio)
         selected_input_device_id = LiveWav2Vec2.get_input_device_id(
@@ -92,7 +88,6 @@ class LiveWav2Vec2():
             float64_buffer = np.frombuffer(
                 audio_frames, dtype=np.int16) / 32767
             
-            # start = time.perf_counter()
 
             # Transform buffer to tensor
             audio_sig = torch.tensor(float64_buffer).float().unsqueeze(0)
@@ -108,15 +103,11 @@ class LiveWav2Vec2():
 
             # Predict
             pred = int(model(X).argmax(1))
-            # print("Predicted:")
-            # print(f"{pred}")
 
             if int(pred) == 1:
                 output_queue.put([pred])
 
             text = wave2vec_asr.buffer_to_text(float64_buffer).lower()
-            # inference_time = time.perf_counter()-start
-            # sample_length = len(float64_buffer) / 16000  # length in sec
             if text != "":
                 output_queue.put([text])                            
 
@@ -141,20 +132,20 @@ class LiveWav2Vec2():
         """returns the text, sample length and inference time in seconds."""
         return self.asr_output_queue.get()           
 
-if __name__ == "__main__":
-    print("Live ASR")
+# if __name__ == "__main__":
+#     print("Live ASR")
 
-    asr = LiveWav2Vec2("facebook/wav2vec2-large-960h-lv60-self")
+#     asr = LiveWav2Vec2("facebook/wav2vec2-large-960h-lv60-self")
     
-    asr.start()
+#     asr.start()
 
-    try:        
-        while True:
-            result = asr.get_last_text()[0]                        
-            # print(f"{sample_length:.3f}s\t{inference_time:.3f}s\t{text}")
-            print("Result:")
-            print(f"{result}")
+#     try:        
+#         while True:
+#             result = asr.get_last_text()[0]                        
+#             # print(f"{sample_length:.3f}s\t{inference_time:.3f}s\t{text}")
+#             print("Result:")
+#             print(f"{result}")
             
-    except KeyboardInterrupt:
-        asr.stop()  
-        exit()
+#     except KeyboardInterrupt:
+#         asr.stop()  
+#         exit()
