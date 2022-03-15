@@ -3,3 +3,5 @@
 output/best_model.pt
 *.icloud
 output1/best_model_1.pt
+*.pyc
+.DS_Store
