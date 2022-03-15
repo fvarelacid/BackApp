@@ -2,12 +2,12 @@ soundfile
 torch
 torchaudio
 transformers
-pyaudio
+PyAudio
 webrtcvad
 rx
 halo
 onnxruntime
-flask
+Flask
 numpy
 pandas
 tqdm
