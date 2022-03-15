@@ -21,10 +21,16 @@ sudo apt install portaudio19-dev
 ```
 
 For MacOS:
+
+1 - Install Portaudio:
 ```
-brew install pyaudio
+brew install portaudio
 ```
 
+2 - Install PyAudio:
+```
+pip install PyAudio
+```
 
 2. Test the app by running:
 
