@@ -1,6 +1,6 @@
-from flask import Flask, render_template, jsonify
 # from flask_simple_geoip import SimpleGeoIP
 import torch
+from flask import Flask, render_template, jsonify
 import numpy as np
 from live_asr import LiveWav2Vec2
 
