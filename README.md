@@ -1,6 +1,6 @@
 # BackApp
 
-# An app that predicts voice distress and requests help to a community around you.
+# An app that predicts voice distress and requests help from a community around you.
 
 The prediction of my scream below...
 
